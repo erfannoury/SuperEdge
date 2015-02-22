@@ -1,0 +1,1 @@
+Final result of most of the methods show a lot of noisy branch-like contours that are false positives most of the time. Maybe these outliers can be removed using a post-processing graph algorithm. I don't exactly know what or how or even if it is plausible or even if it is, it will improve the results but it is an idea that can be tested further.
