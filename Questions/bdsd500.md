@@ -30,3 +30,5 @@
     | 8 | 2  |
 
     The question is how to handle the missing and extra contour maps?
+
+2. How multiple contour maps are used in the training and testing phase? If I stick with 5 contour maps per image, I will lose lots of contour maps in the training phase (I will lose 85 images and I would have 2 redundant contour map images).
