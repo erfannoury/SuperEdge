@@ -11,6 +11,7 @@
     |8 | 3|
 
     * For the training set, there are the numbers:
+
     |Number of contour maps| Number of images|
     |-----------------|--------------|
     | 4 | 2|
