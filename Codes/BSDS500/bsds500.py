@@ -23,8 +23,9 @@ def load_subfolder(imdir, gtdir, validation=False):
     (X,y): tuple on ndarrays
            This tuple will contain the images and repective ground truth contours of images.
            X is of size (nb * 3 * width * height)
-           y is of size (nb * 5 * width * height)
+           y is of size (width * height)
            where width = 321 and height = 481
+           ground truth contour map is created by averaging all of the human-marked boundary maps
 
     """
 
@@ -33,13 +34,12 @@ def load_subfolder(imdir, gtdir, validation=False):
         nb = 100    # size of validation set
 
     nb_xchannels = 3    # number of images channels
-    nb_ychannels = 5    # number of contour maps for each image
     width = 321
     height = 481
 
     # using the bc01 ordering
     X = np.zeros((nb, nb_xchannels, width, height), dtype=np.float32)
-    y = np.zeros((nb, nb_ychannels, width, height), dtype=np.float32)
+    y = np.zeros((nb, width, height), dtype=np.float32)
     idx = -1
     for i, g in zip(os.listdir(imdir), os.listdir(gtdir)):
         idx += 1
@@ -51,30 +51,16 @@ def load_subfolder(imdir, gtdir, validation=False):
         gt = gt["groundTruth"].flatten()
         bnds = [b["Boundaries"][0, 0] for b in gt]
 
-        #########################################
-        #           HACK                        #
-        # Since number of contour maps for each #
-        # image isn't always 5 (sometimes 4,    #
-        # other times 6,7,8) and since I have   #
-        # decided to go with 5 contour maps per #
-        # image (for now, atleast), I ignore    #
-        # the extra contour maps and I also use #
-        # the last contour map twice for the    #
-        # case image has 4 contour maps.        #
-        #########################################
-
-        if len(bnds) == 4:
-            bnds.append(bnds[-1])
         if img.shape[0] == 321:
             X[idx, :, :, :] = img.transpose((2,0,1))
-            for j in xrange(5):
-                y[idx, j, :, :] = bnds[j]
-
+            for j in xrange(len(bnds)):
+            	y += bnds[j]
         else:
             X[idx, :, :, :] = img.transpose((2,1,0))
-            for j in xrange(5):
-                y[idx, j, :, :] = bnds[j].transpose()
-
+            for j in xrange(len(bnds)):
+            	y += bnds[j]
+                
+        y /= len(bnds)
     return (X, y)
 
 def load_data(sub_folders):
