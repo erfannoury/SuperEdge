@@ -6,12 +6,13 @@
 
 ### Abstract
 Notable aspects of the work:
-1. Use of _covariance features_ which depend on _squared_ response of a filter to the input image
-2. Integration of image information from multiple scales and semantic levels via multiple streams of interlinked, layered, and non-linear deep processing
+
+1.  Use of _covariance features_ which depend on _squared_ response of a filter to the input image
+2.  Integration of image information from multiple scales and semantic levels via multiple streams of interlinked, layered, and non-linear deep processing
 
 
 ### Introduction
-_Boundary_ definition from Martin et al. [2004]:
+_Boundary_ definition from [Martin et al. 2004]:
 
 >  **A boundary is a contour in the image plane that represents a change in pixel ownership from one object or surface to another.**
 
@@ -22,6 +23,7 @@ _Edge Detection_:
 
 ### Methods for Visual Boundary Prediction
 Two part architecture:
+
 1. First part performs feature extraction, using unsupervised feature learning
 2. Second part uses the features for boundary prediction, by using a variant of the mean-and-covariance RBM (mcRBM) [Ranzato and Hinton, 2010] architecture and its deep belief net extension.
 
@@ -34,11 +36,13 @@ Is used for pretraining. A mcRBM which is a generative model for images is used.
 A feedforward sigmoidal neural network is used for boundary detection.
 
 Three architectures are considered:
+
 1. **_Shallow network_**: only a single hidden layer is used.
 2. **_Deep Stream_**: uses mcDBN-type hidden units.
 3. **_Two-Stream_**: uses the connection patterns of both former architectures via _skip-layer_ connections.
 
 Each stream has two parts:
+
 1. Image feature extraction
 2. Hypothesis propagation/read-out
 
@@ -76,6 +80,7 @@ The **MSSIM** scores generally agree very well with the (admittedly subjective) 
 **Discriminative model** trained using SGA for maximizing the conditional likelihood of a ground-truth contour map **y** given an image.
 
 **Enhancements**:
+
 1. Standardizing image to have zero mean and standard deviation one. Makes network robust to shift and changes in scale of global intensity.
 2. Averaging multuple ground truth boundary maps in training phase to give a single probability map **y**.
 3. ...
@@ -112,6 +117,9 @@ Kivinen, Jyri J., Christopher KI Williams, Nicolas Heess, and DeepMind Technolog
 
 
 ## References
+
+[Martin et al. 2004] Martin, David R., Charless C. Fowlkes, and Jitendra Malik. "Learning to detect natural image boundaries using local brightness, color, and texture cues." Pattern Analysis and Machine Intelligence, IEEE Transactions on 26, no. 5 (2004): 530-549.
+
 [Dollar and Zitnick 2013] Dollár, Piotr, and C. Lawrence Zitnick. "Structured forests for fast edge detection." In Computer Vision (ICCV), 2013 IEEE International Conference on, pp. 1841-1848. IEEE, 2013.
 
 [Ranzato and Hinton, 2010] Ranzato, M., and Geoffrey E. Hinton. "Modeling pixel means and covariances using factorized third-order Boltzmann machines." In Computer Vision and Pattern Recognition (CVPR), 2010 IEEE Conference on, pp. 2551-2558. IEEE, 2010.
