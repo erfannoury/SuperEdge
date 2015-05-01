@@ -2,6 +2,26 @@
 
 ## Informal Summary
 
+This work introduces a network for boundary detection and also discusses quality assessment methods. In this work, the proposed network takes as input an image and returns as output a boundary map of the same size as the input image. So for every input pixel, there is a predicted probability of that pixel being a boundary. 
+
+The proposed network consists of two parts. First part performs unsupervised feature extraction from the input image. The second part uses the extracted features of the first part to perform supervised boundary prediction.
+
+A _diagonally-tiled convolutional mean-and-covariance Restricted Boltzmann Machine_ (TmcRBM/TmcDBN), which is a generative model for images is used for the unsupervised feature extraction. I had no prior knowledge on these kinds of networks so I can't discuss about them.
+
+Three types (architectures) of feedforward sigmoid networks are used for supervised boundary prediction part. 
+
+* A _shallow_ architecture captures the low-level features and tries to predict only using the low-level and shallow features.
+* A _deep_ architecture uses special types of hidden units (mcDBN-type) to perform _deep_ prediction.
+* A _two stream_ architecture which combines the two former architectures to achieve better results and which incorporates both shallow and deep features to perform boundary prediction.
+
+Discussion on these three architectures isn't trivial to understand. It requires extensive prior knowledge regarding various neural network architectures.
+
+This work has good and concise discussion on quality assessment methods for boundary detection. It highlights the weaknesses associated with previous and widely-used methods of assessment introduced in [Martin et al. 2004]. Paper suggest MSSIM metric for perceptual quality performace assessment and discusses all the former and just-introduced methods of assessments in detail. I could finally get a better grasp of the _**OIS**_ and _**ODS**_ metrics after reading this paper. 
+
+Finally this paper discusses the performance aspect of the proposed method and gives information on running time of the several other state-of-the-art methods which I have only seen published in this paper.
+
+To sum it up all, this was one of the best reads I ever had in the literature. I totally liked it and learned a lot from this research work.
+
 ## Highlights
 
 ### Abstract
