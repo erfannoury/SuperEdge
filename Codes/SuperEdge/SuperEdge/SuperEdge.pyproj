@@ -23,6 +23,12 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="boundary_bench.py" />
+    <Compile Include="bsds500.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test_bsds.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
