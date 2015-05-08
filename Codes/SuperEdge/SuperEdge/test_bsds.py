@@ -16,7 +16,7 @@ def main():
     fig = plt.figure(figsize=(14, 7))
 
     ax = fig.add_subplot(121)
-    ax.imshow(Xtest[10,...].transpose((1,2,0)).astype(np.uint8))
+    ax.imshow(Xtest[10,...].astype(np.uint8))
     ax.axis('off')
 
     ax = fig.add_subplot(122)

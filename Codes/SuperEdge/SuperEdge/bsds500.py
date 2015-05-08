@@ -24,10 +24,10 @@ class BSDS(object):
         Returns
         -------
         (X,y): tuple of ndarrays
-               This tuple will contain the images and repective ground truth contours of images.
-               X is of size (nb * 3 * width * height)
+               This tuple will contain the images and respective ground truth contours of images.
+               X is of size (nb * width * height * 3)
                y is of size (width * height)
-               where width = 321 and height = 481
+               where width = 320 and height = 480
                ground truth contour map is created by averaging all of the human-annotated boundary maps
 
         """
@@ -45,10 +45,10 @@ class BSDS(object):
             nb = 100    # size of validation set
 
         nb_xchannels = 3    # number of images channels
-        width = 321
-        height = 481
-        # using the bc01 ordering
-        X = np.zeros((nb, nb_xchannels, width, height), dtype=np.float32)
+        width = 320
+        height = 480
+        # don't need to use bc01 ordering, feature extractor will take care of the ordering
+        X = np.zeros((nb, width, height, nb_xchannels), dtype=np.float32)
         y = np.zeros((nb, width, height), dtype=np.float32)
 
         imdir = os.path.join(images_path, which)
@@ -58,17 +58,17 @@ class BSDS(object):
             idx += 1
             impath = os.path.join(imdir, i)
             gtpath = os.path.join(gtdir, g)
-            img = misc.imread(impath).astype(dtype=np.float32)
+            img = misc.imread(impath)[:-1,:-1].astype(dtype=np.float32)
             gt = sio.loadmat(gtpath)
             gt = gt["groundTruth"].flatten()
-            bnds = [b["Boundaries"][0, 0] for b in gt]
-            prob_bnd = np.zeros((321, 481), dtype=np.float32)
-            if img.shape[0] == 321:
-                X[idx,:,:,:] = img.transpose((2,0,1))
+            bnds = [b["Boundaries"][0, 0][:-1,:-1] for b in gt]
+            prob_bnd = np.zeros((320, 480), dtype=np.float32)
+            if img.shape[0] == 320:
+                X[idx,:,:,:] = img
                 for j in xrange(len(bnds)):
                     prob_bnd += bnds[j]
             else:
-                X[idx,:,:,:] = img.transpose((2,1,0))
+                X[idx,:,:,:] = img.transpose((1,0,2))
                 for j in xrange(len(bnds)):
                     prob_bnd += bnds[j].transpose()
             y[idx,:,:] = prob_bnd / len(bnds)
