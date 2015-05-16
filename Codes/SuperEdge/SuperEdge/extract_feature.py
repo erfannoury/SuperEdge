@@ -12,15 +12,21 @@ from sklearn.externals import joblib
 from sklearn_theano.utils import check_tensor
 from sklearn_theano.feature_extraction.overfeat import get_overfeat_class_label
 from sklearn.base import BaseEstimator, TransformerMixin
+from scipy.ndimage import zoom
 
 class VGG16Extractor(object):
     def __init__(self, *args, **kwargs):
-        # RGB ordering
-        self.mean_pixel = np.asarray([123.68, 116.779, 103.939], dtype=np.float32)
+        # BGR ordering
+        self.mean_pixel = np.asarray([116.779, 103.939, 123.68], dtype=np.float32)
         self.model_address = '../../../Models/VGG_ILSVRC_16_layers.caffemodel'
         self.model_pickle = '../../../Models/VGG_ILSVRC_16_layers.pkl'
+        self.model_trans = '../../../Models/Transformation Pickles/'
         self.caffemodel = None
         self.parsedmodel = None
+        self.image_width = 480
+        self.image_height = 320
+
+        print 'loading caffemodel'
         if not os.path.exists(self.model_pickle):
             now = datetime.now()
             self.caffemodel = self._open_caffe_model(self.model_address)
@@ -71,7 +77,9 @@ class VGG16Extractor(object):
                                     )
 
     def _open_caffe_model(self, caffemodel_file):
-        """Opens binary format .caffemodel files. Returns protobuf object."""
+        """
+        Opens binary format .caffemodel files. Returns protobuf object.
+        """
         binary_content = open(caffemodel_file, "rb").read()
         protobuf = caffe_pb2.NetParameter()
         protobuf.ParseFromString(binary_content)
@@ -79,7 +87,9 @@ class VGG16Extractor(object):
         return protobuf
 
     def _blob_to_ndarray(self, blob):
-        """Converts a caffe protobuf blob into an ndarray"""
+        """
+        Converts a caffe protobuf blob into an ndarray
+        """
         dimnames = ["num", "channels", "height", "width"]
         data = np.array(blob.data)
         shape = tuple([getattr(blob, dimname) for dimname in dimnames])
@@ -159,13 +169,32 @@ class VGG16Extractor(object):
 
         return theano.function([input_data], to_compile)
 
-    def layerwiseTransform(self, input_data, float_dtype='float32', verbose=0):
+    def preprocess_image(self, input_image):
+        """
+        This will preprocess the input image, swap channels into BGR ordering and subtract the mean pixel value
+
+        Parameters
+        ==========
+        input_image: numpy.ndarray
+            a 3-channel input image with RGB channel ordering and of shape height * width * 3
+        Returns
+        =======
+        image: numpy.ndarray
+            a 3-channel image with BGR channel ordering and zero-centered by mean pixel value
+        """
+        image = input_image.astype(np.float32)
+        image = image[:,:,[2,1,0]]
+        image -= self.mean_pixel
+        return image
+
+    def __layerwiseTransform__(self, input_data, float_dtype='float32', verbose=0):
         transformations = {}
         verbose = 1
-        input_data = input_data - self.mean_pixel
+        input_data = self.preprocess_image(input_data)
         X = check_tensor(input_data, dtype=np.float32, n_dim=4)
         last_expression = None
         current_expression = None
+        # bc01 ordering 
         trans_order = (0, 3, 1, 2)
         X = X.transpose(trans_order)
 
@@ -347,8 +376,54 @@ class VGG16Extractor(object):
                 last_expression = current_expression
         return transformations
 
+    def transform(self, image, name=None):
+        """
+        This will transform the input image, get channel activations and return a hyperimage as feature for the image
+        
+        Parameters
+        ==========
+        image: numpy.ndarray
+            the input image, a 3 channel image with RGB ordering, of shape height * width * 3
+        name: str
+            name of the image, so as to save the transformed image features as a pickle file
+            default is None and in the default case pickle file won't be saved
+        Returns
+        =======
+        hyperimage: numpy.ndarray
+            features from all the convolutional layers in the network, concatenated to form a hyperimage of 
+            size `height x width x 4224` for VGG 16 net.
+        """
+        transed = None
+        raw_transed = None
+        if name is not None:
+            if name[-4:] != '.pkl':
+                name = name + '.pkl'
+            if os.path.exists(self.model_trans + name):
+                f = file(self.model_trans + name, 'rb')
+                transed = cPickle.load(f)
+                f.close()
+        if transed is None:
+            raw_transed = self.__layerwiseTransform__(image)
+        transed = {}
+        for l in raw_transed.keys():
+            if l.startswith('conv'):
+                transed[l] = raw_transed[l][0,...].transpose((1,2,0))
+        if name is not None:
+            f = file(self.model_trans + name, 'wb')
+            cPickle.dump(transed, f, protocol=2)
+            f.close()
+
+        stack_tup = tuple()
+        for l in sorted(transed.keys()):
+            sh = transed[l].shape
+            transed[l] = zoom(transed[l], (self.image_height / sh[0], self.image_width / sh[1], 1), order=1)
+            stack_tup = stack_tup + (transed[l],)
+        hyperimage = np.dstack(stack_tup)
+        return hyperimage
+
 
 def main():
     vgg = VGG16Extractor()
+
 if __name__ == '__main__':
     main()
