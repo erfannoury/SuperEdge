@@ -1,4 +1,5 @@
 import theano.tensor as T
+import theano
 import numpy as np
 import caffe_pb2
 import os
@@ -25,24 +26,6 @@ class VGG16Extractor(object):
         self.parsedmodel = None
         self.image_width = 480
         self.image_height = 320
-
-        print 'loading caffemodel'
-        if not os.path.exists(self.model_pickle):
-            now = datetime.now()
-            self.caffemodel = self._open_caffe_model(self.model_address)
-            print 'parsing using protobuf takes ', (datetime.now() - now)
-            f = file(self.model_pickle, 'wb')
-            cPickle.dump(self.caffemodel, f, protocol=2)
-            print 'dumped parsed caffemodel to pickle file'
-            f.close()
-        else:
-            now = datetime.now()
-            f = file(self.model_pickle, 'rb')
-            self.caffemodel = cPickle.load(f)
-            print 'loading pickle file takes ', (datetime.now() - now)
-            f.close()
-
-
         self.LAYER_PROPERTIES = dict(
                                     DATA=None,
                                     CONVOLUTION=('blobs',
@@ -76,6 +59,27 @@ class VGG16Extractor(object):
                                     SOFTMAX=None
                                     )
 
+        print 'loading caffemodel'
+        if not os.path.exists(self.model_pickle):
+            now = datetime.now()
+            self.caffemodel = self._open_caffe_model(self.model_address)
+            print 'parsing using protobuf took ', (datetime.now() - now)
+            f = file(self.model_pickle, 'wb')
+            cPickle.dump(self.caffemodel, f, protocol=2)
+            print 'dumped parsed caffemodel to pickle file'
+            f.close()
+        else:
+            now = datetime.now()
+            f = file(self.model_pickle, 'rb')
+            self.caffemodel = cPickle.load(f)
+            print 'loading pickle file took ', (datetime.now() - now)
+            f.close()
+
+        print 'parsing caffemodel'
+        self._parse_caffe_model()
+
+        
+
     def _open_caffe_model(self, caffemodel_file):
         """
         Opens binary format .caffemodel files. Returns protobuf object.
@@ -100,7 +104,7 @@ class VGG16Extractor(object):
             if len(property_path) == 1:
                 return getattr(obj, property_path[0])
             else:
-                return _get_property(getattr(obj, property_path[0]),
+                return self._get_property(getattr(obj, property_path[0]),
                                      property_path[1:])
         else:
             return getattr(obj, property_path)
@@ -137,37 +141,19 @@ class VGG16Extractor(object):
                                     bottom_blobs=tuple(layer.bottom))
             parsed.append(layer_descriptor)
             # specific properties
-            specifics = LAYER_PROPERTIES[ltype]
+            specifics = self.LAYER_PROPERTIES[ltype]
             if specifics is None:
                 continue
             for param in specifics:
                 if param == 'blobs':
-                    layer_descriptor['blobs'] = map(_blob_to_ndarray,
+                    layer_descriptor['blobs'] = map(self._blob_to_ndarray,
                                                     layer.blobs)
                 else:
                     param_name = '__'.join(param)
-                    param_value = _get_property(layer, param)
+                    param_value = self._get_property(layer, param)
                     layer_descriptor[param_name] = param_value
         self.parsedmodel = parsed
-
-    def create_theano_expressions(model=None, verbose=0):
-        if model is None:
-            model = fetch_googlenet_architecture()
-
-        layers, blobs, inputs = parse_caffe_model(model, verbose=verbose)
-        data_input = inputs['data']
-        return blobs, data_input
-
-    def _get_fprop(output_layers=('fc8',), model=None, verbose=0):
-
-        if model is None:
-            model = fetch_googlenet_architecture(model)
-
-        expressions, input_data = create_theano_expressions(model,
-                                                        verbose=verbose)
-        to_compile = [expressions[expr] for expr in output_layers]
-
-        return theano.function([input_data], to_compile)
+        self.caffemodel = None
 
     def preprocess_image(self, input_image):
         """
@@ -189,7 +175,6 @@ class VGG16Extractor(object):
 
     def __layerwiseTransform__(self, input_data, float_dtype='float32', verbose=0):
         transformations = {}
-        verbose = 1
         input_data = self.preprocess_image(input_data)
         X = check_tensor(input_data, dtype=np.float32, n_dim=4)
         last_expression = None
@@ -203,7 +188,7 @@ class VGG16Extractor(object):
         inputs = OrderedDict()
         blobs = OrderedDict()
 
-        for i, layer in enumerate(parsed_caffe_model):
+        for i, layer in enumerate(self.parsedmodel):
             layer_type = layer['type']
             layer_name = layer['name']
             top_blobs = layer['top_blobs']
