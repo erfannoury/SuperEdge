@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>710e04f4-2472-4482-a8d1-b9ee35a76eb2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>extract_feature.py</StartupFile>
+    <StartupFile>test_extract_feature.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -31,6 +31,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test_bsds.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test_extract_feature.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
