@@ -8,9 +8,11 @@ def main():
     now = datetime.now()    
     vgg = VGG16Extractor()
     Xtrain, ytrain = BSDS.load(which='train')
+    ytrain = None
     for i in xrange(Xtrain.shape[0]):
         hyperimage = vgg.transform(Xtrain[i,...])
         print i, ' ', hyperimage.shape
+        hyperimage = None
     print 'transforming training set took ', (datetime.now() - now)
 
 
