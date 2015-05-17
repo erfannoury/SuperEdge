@@ -3,6 +3,7 @@ import theano
 import numpy as np
 import caffe_pb2
 import os
+import cv2
 import cPickle
 from datetime import datetime
 from collections import OrderedDict
@@ -401,9 +402,11 @@ class VGG16Extractor(object):
         stack_tup = tuple()
         for l in sorted(transed.keys()):
             sh = transed[l].shape
-            transed[l] = zoom(transed[l], (self.image_height / sh[0], self.image_width / sh[1], 1), order=1)
+#            transed[l] = zoom(transed[l], (self.image_height / sh[0], self.image_width / sh[1], 1), order=1)
+            transed[l] = cv2.resize(transed[l], (self.image_height, self.image_width), interpolation=cv2.INTER_LINEAR)
             stack_tup = stack_tup + (transed[l],)
         hyperimage = np.dstack(stack_tup)
+        transed = None
         return hyperimage
 
 
