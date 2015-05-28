@@ -38,7 +38,7 @@ class PoissonDiskSampler(object):
 
         Returns
         =======
-        samples: list of tuples if int
+        samples: list of tuples of two ints
             A list containing the coordinates sampled on a 2-d region such that no two samples points have distance less than `radius`.
         """
         # initialize with a seed point
