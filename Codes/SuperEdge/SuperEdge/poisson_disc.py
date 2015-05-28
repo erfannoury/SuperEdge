@@ -19,7 +19,7 @@ class PoissonDiskSampler(object):
         radius: float
             minimum distance between two arbitrary sampled points
         k: int
-            maximum number od samples before rejection
+            maximum number of samples before rejection
         """
         self.width = width
         self.height = height
