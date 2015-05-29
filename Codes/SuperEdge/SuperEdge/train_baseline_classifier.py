@@ -13,7 +13,6 @@ def main():
     pds = PoissonDiskSampler(vgg.image_width, vgg.image_height, 4)
     samples = pds.get_sample()
     Xtrain, ytrain = BSDS.load(which='train')
-    ytrain = None
     features = []
     labels = []
     for i in xrange(Xtrain.shape[0]):
@@ -33,7 +32,20 @@ def main():
     features = np.asarray(features, dtype=np.float32)
     print 'features.shape: ', features.shape
     labels = np.asarray(labels, dtype=np.float32)
+    labels = np.reshape(labels, (labels.shape[0], 1))
     print 'labels.shape: ', labels.shape
+
+    now = datetime.now()
+    print 'starting training LinearSVM classifier'
+    svc = LinearSVC()
+    print 'LinearSVM Parameters: ', svc
+    svc.fit(features, (labels > 0))
+    print 'training LinearSVM classifier took: ', (datetime.now() - now)
+    print 'saving trained classifier'
+    f = file('linearSVC.pkl', 'wb')
+    cPickle.dump(svc, f, protocol=2)
+    f.close()
+
 
 if __name__ == '__main__':
     main()
