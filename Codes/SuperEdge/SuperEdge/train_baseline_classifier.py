@@ -32,7 +32,6 @@ def main():
     features = np.asarray(features, dtype=np.float32)
     print 'features.shape: ', features.shape
     labels = np.asarray(labels, dtype=np.float32)
-    labels = np.reshape(labels, (labels.shape[0], 1))
     print 'labels.shape: ', labels.shape
 
     now = datetime.now()
@@ -42,7 +41,7 @@ def main():
     svc.fit(features, (labels > 0))
     print 'training LinearSVM classifier took: ', (datetime.now() - now)
     print 'saving trained classifier'
-    f = file('linearSVC.pkl', 'wb')
+    f = file('../../../Models/linearSVC.pkl', 'wb')
     cPickle.dump(svc, f, protocol=2)
     f.close()
 
