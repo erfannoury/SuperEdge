@@ -2,6 +2,7 @@ import numpy as np
 from extract_feature import VGG16Extractor
 from datetime import datetime
 import h5py
+from scipy import io
 
 def main():
     now = datetime.now()    
@@ -9,17 +10,12 @@ def main():
     nyud_images = '../../../Datasets/nyu_images.mat'
     nyud_images = h5py.File(nyud_images, 'r')
     images = nyud_images['images']
-    f_name = '../../../Datasets/NYUD.mat'
-    f = h5py.File(f_name, 'w')
-    dset = None
     for i in xrange(5):
         hyperimage = vgg.transform(images[i,:,:,:].transpose((2,1,0)))
         print i, ' ', hyperimage.shape
-        if dset is None:
-            dset = f.create_dataset('nyud', (images.shape[0],) + hyperimage.shape , np.float32)
-        dset[i,...] = hyperimage
+        f_name = str.format('../../../Datasets/NYUD/%d.mat' % i)
+        io.savemat(f_name, {'feature': hyperimage})
         hyperimage = None
-    f.close()
     nyud_images.close()
     print 'transforming the images set took ', (datetime.now() - now)
 
