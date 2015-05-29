@@ -17,16 +17,26 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from scipy.ndimage import zoom
 
 class VGG16Extractor(object):
-    def __init__(self, *args, **kwargs):
+    def __init__(self, width=480, height=320, use_mean_pixel=True, *args, **kwargs):
+        self.image_width = width
+        self.image_height = height
+        self.use_mean_pixel = use_mean_pixel
         # BGR ordering
         self.mean_pixel = np.asarray([116.779, 103.939, 123.68], dtype=np.float32)
-        self.model_address = '../../../Models/VGG_ILSVRC_16_layers.caffemodel'
-        self.model_pickle = '../../../Models/VGG_ILSVRC_16_layers.pkl'
+        self.mean_image = '../../../Models/VGG_CNN_F_mean.pkl'
+        ######## Loading mean image for VGG CNN F (BGR ordering) ##########
+        f = file(self.mean_image, 'rb')
+        self.mean_image = cPickle.load(f)
+        f.close()
+        self.mean_image = cv2.resize(self.mean_image, (self.image_width, self.image_height))
+        ######## Loading mean image for VGG CNN F ##########
+#        self.model_address = '../../../Models/VGG_ILSVRC_16_layers.caffemodel'
+#        self.model_pickle = '../../../Models/VGG_ILSVRC_16_layers.pkl'
+        self.model_address = '../../../Models/VGG_CNN_F.caffemodel'
+        self.model_pickle = '../../../Models/VGG_CNN_F.pkl'
         self.model_trans = '../../../Models/Transformation Pickles/'
         self.caffemodel = None
         self.parsedmodel = None
-        self.image_width = 480
-        self.image_height = 320
         self.LAYER_PROPERTIES = dict(
                                     DATA=None,
                                     CONVOLUTION=('blobs',
@@ -171,7 +181,10 @@ class VGG16Extractor(object):
         """
         image = input_image.astype(np.float32)
         image = image[:,:,[2,1,0]]
-        image -= self.mean_pixel
+        if self.use_mean_pixel:
+            image -= self.mean_pixel
+        else:
+            image -= self.mean_image
         return image
 
     def __layerwiseTransform__(self, input_data, float_dtype='float32', verbose=0):
@@ -369,7 +382,7 @@ class VGG16Extractor(object):
         Parameters
         ==========
         image: numpy.ndarray
-            the input image, a 3 channel image with RGB ordering, of shape height * width * 3
+            the input image, a 3 channel image with RGB ordering, of shape `height * width * 3`
         name: str
             name of the image, so as to save the transformed image features as a pickle file
             default is None and in the default case pickle file won't be saved
@@ -403,7 +416,7 @@ class VGG16Extractor(object):
         for l in sorted(transed.keys()):
             sh = transed[l].shape
 #            transed[l] = zoom(transed[l], (self.image_height / sh[0], self.image_width / sh[1], 1), order=1)
-            transed[l] = cv2.resize(transed[l], (self.image_height, self.image_width), interpolation=cv2.INTER_LINEAR)
+            transed[l] = cv2.resize(transed[l], (self.image_width, self.image_height), interpolation=cv2.INTER_LINEAR)
             stack_tup = stack_tup + (transed[l],)
         hyperimage = np.dstack(stack_tup)
         transed = None
