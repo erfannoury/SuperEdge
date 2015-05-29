@@ -19,8 +19,8 @@ def main():
     for i in xrange(Xtrain.shape[0]):
         hyperimage = vgg.transform(Xtrain[i,...])
         print i, ' ', hyperimage.shape
-        for y in hyperimage.shape[0]:
-            for x in hyperimage.shape[1]:
+        for y in xrange(hyperimage.shape[0]):
+            for x in xrange(hyperimage.shape[1]):
                 if ytrain[i, y, x] > 0:
                     features.append(hyperimage[y,x,:])
                     labels.append(ytrain[i,y,x])
