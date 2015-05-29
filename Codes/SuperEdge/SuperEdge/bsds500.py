@@ -14,7 +14,7 @@ class BSDS(object):
     @staticmethod
     def load(which='train'):
         """
-        This will load the images and ground truth files for the specified subfolder.
+        This will load the images and ground truth files for the specified subfolder. (RGB ordering)
 
         Parameters
         ----------
