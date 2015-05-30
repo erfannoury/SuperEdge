@@ -11,10 +11,10 @@ def main():
     nyud_images = h5py.File(nyud_images, 'r')
     images = nyud_images['images']
     for i in xrange(5):
-        hyperimage = vgg.transform(images[i,:,:,:].transpose((2,1,0)))
-        print i, ' ', hyperimage.shape
+        hyperdict = vgg.transform_unscaled(images[i,:,:,:].transpose((2,1,0)))
+        print i, ' ', hyperdict.shape
         f_name = str.format('../../../Datasets/NYUD/%d.mat' % i)
-        io.savemat(f_name, {'feature': hyperimage})
+        io.savemat(f_name, hyperdict)
         hyperimage = None
     nyud_images.close()
     print 'transforming the images set took ', (datetime.now() - now)
