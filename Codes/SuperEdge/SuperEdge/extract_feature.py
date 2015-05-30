@@ -422,6 +422,45 @@ class VGG16Extractor(object):
         transed = None
         return hyperimage
 
+    def transform_unscaled(self, image, name=None):
+        """
+        This will transform the input image, get channel activations and return layer activations for input image as a dictionary
+        
+        Parameters
+        ==========
+        image: numpy.ndarray
+            the input image, a 3 channel image with RGB ordering, of shape `height * width * 3`
+        name: str
+            name of the image, so as to save the transformed image features as a pickle file
+            default is None and in the default case pickle file won't be saved
+        Returns
+        =======
+        hyperdict: dict<layer name, numpy.ndarray>
+            features from all the convolutional layers in the network, all inside a dictionary with layer names as dictionary key
+            and layer activations as dictionary value
+        """
+        hyperdict = None
+        raw_transed = None
+        if name is not None:
+            if name[-4:] != '.pkl':
+                name = name + '.pkl'
+            if os.path.exists(self.model_trans + name):
+                f = file(self.model_trans + name, 'rb')
+                hyperdict = cPickle.load(f)
+                f.close()
+        if hyperdict is None:
+            raw_transed = self.__layerwiseTransform__(image)
+        hyperdict = {}
+        for l in raw_transed.keys():
+            if l.startswith('conv'):
+                hyperdict[l] = raw_transed[l][0,...].transpose((1,2,0))
+        if name is not None:
+            f = file(self.model_trans + name, 'wb')
+            cPickle.dump(hyperdict, f, protocol=2)
+            f.close()
+        
+        return hyperdict
+
 
 def main():
     vgg = VGG16Extractor()
