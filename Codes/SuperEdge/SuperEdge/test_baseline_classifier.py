@@ -7,17 +7,15 @@ from sklearn.svm import LinearSVC
 from matplotlib import pyplot as plt
 from mpltools import style
 from scipy import io
-import cPickle
+from sklearn.externals import joblib
 style.use(['ggplot'])
 
 def main():
     # load pre-trained model
     print 'loading pretrained model'
-    model_addr = '../../../Models/linearSVC_120.pkl'
-    f = file(model_addr, 'rb')
-    svc = cPickle.load(f)
-    f.close()
-    
+    model_addr = '../../../Models/linearSVC.pkl'
+    svc = joblib.load(model_addr)
+        
     now = datetime.now()    
     print 'loading test dataset'
     Xtest, ytest = BSDS.load(which='test')
