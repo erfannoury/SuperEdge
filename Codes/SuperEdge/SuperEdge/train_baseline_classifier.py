@@ -5,7 +5,7 @@ from poisson_disc import PoissonDiskSampler
 from datetime import datetime
 from bsds500 import BSDS
 from sklearn.svm import LinearSVC
-import cPickle
+from sklearn.externals import joblib
 
 def main():
     now = datetime.now()    
@@ -41,9 +41,7 @@ def main():
     svc.fit(features, int(labels > 0))
     print 'training LinearSVM classifier took: ', (datetime.now() - now)
     print 'saving trained classifier'
-    f = file('../../../Models/linearSVC.pkl', 'wb')
-    cPickle.dump(svc, f, protocol=2)
-    f.close()
+    joblib.dump(svc, '../../../Models/linearSVC.pkl', compress=True)
 
 
 if __name__ == '__main__':
