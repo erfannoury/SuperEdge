@@ -10,9 +10,9 @@ def main():
     nyud_images = '../../../Datasets/nyu_images.mat'
     nyud_images = h5py.File(nyud_images, 'r')
     images = nyud_images['images']
-    for i in xrange(5):
+    for i in xrange(images.shape[0]):
         hyperdict = vgg.transform_unscaled(images[i,:,:,:].transpose((2,1,0)))
-        print i, ' ', hyperdict.shape
+        print i
         f_name = str.format('../../../Datasets/NYUD/%d.mat' % i)
         io.savemat(f_name, hyperdict)
         hyperimage = None
