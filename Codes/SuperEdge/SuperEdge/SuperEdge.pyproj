@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>710e04f4-2472-4482-a8d1-b9ee35a76eb2</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>nyud_features.py</StartupFile>
+    <StartupFile>test_baseline_classifier.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -34,6 +34,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="poisson_disc.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test_baseline_classifier.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test_bsds.py">
