@@ -14,7 +14,7 @@ def main():
         hyperdict = vgg.transform_unscaled(images[i,:,:,:].transpose((2,1,0)))
         print i
         f_name = str.format('../../../Datasets/NYUD/%d.mat' % i)
-        io.savemat(f_name, hyperdict)
+        io.savemat(f_name, hyperdict, do_compression=True)
         hyperimage = None
     nyud_images.close()
     print 'transforming the images set took ', (datetime.now() - now)
