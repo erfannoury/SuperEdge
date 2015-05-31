@@ -24,7 +24,7 @@ def main():
         hyperimage = vgg.transform(Xtest[i,...])
         print i, ' ', hyperimage.shape
         ypred = rf.predict(hyperimage.reshape((hyperimage.shape[0] * hyperimage.shape[1], hyperimage.shape[2])))
-        ypred = ypred.reshape((hyperimage.shape[0], hyperimage.shape[1], hyperimage.shape[2]))
+        ypred = ypred.reshape((hyperimage.shape[0], hyperimage.shape[1]))
 
         print 'single image prediction took: ', (datetime.now() - tic)
         if show_results:
