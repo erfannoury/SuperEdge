@@ -4,7 +4,7 @@ from extract_feature import VGG16Extractor
 from poisson_disc import PoissonDiskSampler
 from datetime import datetime
 from bsds500 import BSDS
-from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier as RF
 from sklearn.externals import joblib
 
 def main():
@@ -26,7 +26,7 @@ def main():
         for s in samples:
             if ytrain[i, s[1], s[0]] == 0:
                 features.append(hyperimage[s[1],s[0],:])
-                labels.append(0)
+                labels.append(ytrain[i,s[1], s[0]])
         hyperimage = None
     print 'transforming training set took ', (datetime.now() - now)
     features = np.asarray(features, dtype=np.float32)
@@ -35,13 +35,13 @@ def main():
     print 'labels.shape: ', labels.shape
 
     now = datetime.now()
-    print 'starting training LinearSVM classifier'
-    svc = LinearSVC()
-    print 'LinearSVM Parameters: ', svc
-    svc.fit(features, (labels > 0).astype(np.int32))
-    print 'training LinearSVM classifier took: ', (datetime.now() - now)
+    print 'starting training RandomForest classifier'
+    rf = RF(n_jobs=12)
+    print 'RandomForest Parameters: ', rf
+    rf.fit(features, (labels > 0).astype(np.int32))
+    print 'training RandomForest classifier took: ', (datetime.now() - now)
     print 'saving trained classifier'
-    joblib.dump(svc, '../../../Models/linearSVC.pkl', compress=True)
+    joblib.dump(rf, '../../../Models/RandomForest.pkl', compress=True)
 
 
 if __name__ == '__main__':
