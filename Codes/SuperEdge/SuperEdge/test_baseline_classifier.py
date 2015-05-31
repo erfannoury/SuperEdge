@@ -5,10 +5,8 @@ from datetime import datetime
 from bsds500 import BSDS
 from sklearn.ensemble import RandomForestClassifier as RF
 from matplotlib import pyplot as plt
-from mpltools import style
 from scipy import io
 from sklearn.externals import joblib
-style.use(['ggplot'])
 
 def main():
     # load pre-trained model
@@ -24,11 +22,9 @@ def main():
     for i in xrange(Xtest.shape[0]):
         tic = datetime.now()
         hyperimage = vgg.transform(Xtest[i,...])
-        ypred = np.zeros(ytest[0].shape, dtype=np.float32)
         print i, ' ', hyperimage.shape
-        for y in xrange(hyperimage.shape[0]):
-            for x in xrange(hyperimage.shape[1]):
-                    ypred[y,x] = rf.predict(hyperimage[y,x,:])
+        ypred = rf.predict(hyperimage.reshape((hyperimage.shape[0] * hyperimage.shape[1], hyperimage.shape[2])))
+        ypred = ypred.reshape((hyperimage.shape[0], hyperimage.shape[1], hyperimage.shape[2]))
 
         print 'single image prediction took: ', (datetime.now() - tic)
         if show_results:
