@@ -54,23 +54,25 @@ class BSDS(object):
 		imdir = os.path.join(images_path, which)
 		gtdir = os.path.join(gt_path, which)
 		idx = -1
-		for i, g in zip(os.listdir(imdir), os.listdir(gtdir)):
-			idx += 1
-			impath = os.path.join(imdir, i)
-			gtpath = os.path.join(gtdir, g)
-			img = misc.imread(impath)[:-1,:-1].astype(dtype=np.float32)
-			gt = sio.loadmat(gtpath)
-			gt = gt["groundTruth"].flatten()
-			bnds = [b["Boundaries"][0, 0][:-1,:-1] for b in gt]
-			prob_bnd = np.zeros((320, 480), dtype=np.float32)
-			if img.shape[0] == 320:
-				X[idx,:,:,:] = img
-			else:
-				X[idx,:,:,:] = img.transpose((1,0,2))
-			for j in xrange(len(bnds)):
-				if bnds[j].shape[0] == 320 and bnds[j].shape[1] == 480:
-					prob_bnd += bnds[j]
+		for i in os.listdir(imdir):
+			if i[-4:] == '.jpg':
+				idx += 1
+				impath = os.path.join(imdir, i)
+				g = i[:-4] + '.mat'
+				gtpath = os.path.join(gtdir, g)
+				img = misc.imread(impath)[:-1,:-1].astype(dtype=np.float32)
+				gt = sio.loadmat(gtpath)
+				gt = gt["groundTruth"].flatten()
+				bnds = [b["Boundaries"][0, 0][:-1,:-1] for b in gt]
+				prob_bnd = np.zeros((320, 480), dtype=np.float32)
+				if img.shape[0] == 320:
+					X[idx,:,:,:] = img
 				else:
-					prob_bnd += bnds[j].transpose()
-			y[idx,:,:] = prob_bnd / len(bnds)
+					X[idx,:,:,:] = img.transpose((1,0,2))
+				for j in xrange(len(bnds)):
+					if bnds[j].shape[0] == 320 and bnds[j].shape[1] == 480:
+						prob_bnd += bnds[j]
+					else:
+						prob_bnd += bnds[j].transpose()
+				y[idx,:,:] = prob_bnd / len(bnds)
 		return (X, y)
