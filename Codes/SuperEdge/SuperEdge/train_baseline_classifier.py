@@ -38,7 +38,7 @@ def main():
     print 'starting training LinearSVM classifier'
     svc = LinearSVC()
     print 'LinearSVM Parameters: ', svc
-    svc.fit(features, int(labels > 0))
+    svc.fit(features, (labels > 0).astype(np.int32))
     print 'training LinearSVM classifier took: ', (datetime.now() - now)
     print 'saving trained classifier'
     joblib.dump(svc, '../../../Models/linearSVC.pkl', compress=True)
