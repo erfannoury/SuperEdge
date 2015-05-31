@@ -3,7 +3,7 @@ import cv2
 from extract_feature import VGG16Extractor
 from datetime import datetime
 from bsds500 import BSDS
-from sklearn.svm import LinearSVC
+from sklearn.ensemble import RandomForestClassifier as RF
 from matplotlib import pyplot as plt
 from mpltools import style
 from scipy import io
@@ -13,8 +13,8 @@ style.use(['ggplot'])
 def main():
     # load pre-trained model
     print 'loading pretrained model'
-    model_addr = '../../../Models/linearSVC.pkl'
-    svc = joblib.load(model_addr)
+    model_addr = '../../../Models/RandomForest.pkl'
+    rf = joblib.load(model_addr)
         
     now = datetime.now()    
     print 'loading test dataset'
@@ -28,7 +28,7 @@ def main():
         print i, ' ', hyperimage.shape
         for y in xrange(hyperimage.shape[0]):
             for x in xrange(hyperimage.shape[1]):
-                    ypred[y,x] = svc.predict(hyperimage[y,x,:])
+                    ypred[y,x] = rf.predict(hyperimage[y,x,:])
 
         print 'single image prediction took: ', (datetime.now() - tic)
         if show_results:
@@ -52,8 +52,9 @@ def main():
             plt.show()
         else:
             print 'saving prediction result'
-            cv2.imwrite(str.format('../../../Dataset/BSDS500/result/test_%d.png' % i), ypred)
-            io.savemat(str.format('../../../Dataset/BSDS500/result/test_%d.mat' % i), {'pred': ypred}, do_compression=True)
+            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d.png' % i), (ypred*255))
+            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d_gt.png' % i), (255 * ytest[i,...]))
+            io.savemat(str.format('../../../Datasets/BSDS500/result/test_%d.mat' % i), {'pred': ypred}, do_compression=True, appendmat=False)
 
         hyperimage = None
     print 'predicting output for test set took ', (datetime.now() - now)
