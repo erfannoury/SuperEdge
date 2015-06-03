@@ -3,16 +3,16 @@ import cv2
 from extract_feature import VGG16Extractor
 from datetime import datetime
 from bsds500 import BSDS
-from sklearn.ensemble import RandomForestClassifier as RF
 from matplotlib import pyplot as plt
 from scipy import io
 from sklearn.externals import joblib
+import xgboost as xgb
 
 def main():
     # load pre-trained model
     print 'loading pretrained model'
-    model_addr = '../../../Models/RandomForest.pkl'
-    rf = joblib.load(model_addr)
+    model_addr = '../../../Models/XGBR.pkl'
+    clf = joblib.load(model_addr)
         
     now = datetime.now()    
     print 'loading test dataset'
@@ -23,7 +23,7 @@ def main():
         tic = datetime.now()
         hyperimage = vgg.transform(Xtest[i,...])
         print i, ' ', hyperimage.shape
-        ypred = rf.predict(hyperimage.reshape((hyperimage.shape[0] * hyperimage.shape[1], hyperimage.shape[2])))
+        ypred = clf.predict(hyperimage.reshape((hyperimage.shape[0] * hyperimage.shape[1], hyperimage.shape[2])))
         ypred = ypred.reshape((hyperimage.shape[0], hyperimage.shape[1]))
 
         print 'single image prediction took: ', (datetime.now() - tic)
@@ -50,6 +50,7 @@ def main():
             print 'saving prediction result'
             cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d.png' % i), (ypred*255))
             cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d_gt.png' % i), (255 * ytest[i,...]))
+            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d_im.png' % i), Xtest[i,...])
             io.savemat(str.format('../../../Datasets/BSDS500/result/test_%d.mat' % i), {'pred': ypred}, do_compression=True, appendmat=False)
 
         hyperimage = None
