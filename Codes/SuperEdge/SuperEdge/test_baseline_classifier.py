@@ -8,6 +8,7 @@ import xgboost as xgb
 from matplotlib import pyplot as plt
 from scipy import io
 from sklearn.externals import joblib
+import xgboost as xgb
 
 def main():
     # load pre-trained model
@@ -25,6 +26,7 @@ def main():
         tic = datetime.now()
         hyperimage = vgg.transform(Xtest[i])
         print str.format('%d - %s : ' % (i, ntest[i])), Xtest[i].shape
+        
         ypred = clf.predict(hyperimage.reshape((hyperimage.shape[0] * hyperimage.shape[1], hyperimage.shape[2])))
         ypred = ypred.reshape((hyperimage.shape[0], hyperimage.shape[1]))
         ypred = (ypred - ypred.min()) / (ypred.max() - ypred.min())
@@ -51,7 +53,7 @@ def main():
             plt.show()
         if save_results:
             print 'saving prediction result'
-            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/%s.png' % i), (ypred*255))
+            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/%s.png' % i), (ypred * 255))
             #cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d_gt.png' % i), (255 * ytest[i]))
             io.savemat(str.format('../../../Datasets/BSDS500/result/%s.mat' % i), {'ucm2': ypred}, do_compression=True, appendmat=False)
 
