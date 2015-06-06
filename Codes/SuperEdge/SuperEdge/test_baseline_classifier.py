@@ -20,9 +20,9 @@ def main():
     print 'loading test dataset'
     Xtest, ytest, ntest = BSDS.list_load(which='test')
     vgg = VGG16Extractor()
-    show_results = True
-    save_results = False
-    for i in xrange(5):
+    show_results = False
+    save_results = True
+    for i in xrange(15):
         tic = datetime.now()
         hyperimage = vgg.transform(Xtest[i])
         print str.format('%d - %s : ' % (i, ntest[i])), Xtest[i].shape
@@ -53,9 +53,9 @@ def main():
             plt.show()
         if save_results:
             print 'saving prediction result'
-            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/%s.png' % i), (ypred * 255))
+            cv2.imwrite(str.format('../../../Datasets/BSDS500/result/%s.png' % ntest[i]), (ypred * 255))
             #cv2.imwrite(str.format('../../../Datasets/BSDS500/result/test_%d_gt.png' % i), (255 * ytest[i]))
-            io.savemat(str.format('../../../Datasets/BSDS500/result/%s.mat' % i), {'ucm2': ypred}, do_compression=True, appendmat=False)
+            io.savemat(str.format('../../../Datasets/BSDS500/result/%s.mat' % ntest[i]), {'ucm2': ypred}, do_compression=True, appendmat=False)
 
         hyperimage = None
     print 'predicting output for test set took ', (datetime.now() - now)
