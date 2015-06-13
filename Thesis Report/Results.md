@@ -25,7 +25,6 @@
 ![3.XGBRegressor](Result Charts/3.isoF.png)
 
 
-
 # 
 [1] - Canny, John. "A computational approach to edge detection." _Pattern Analysis and Machine Intelligence, IEEE Transactions on_ 6 (1986): 679-698.
 
