@@ -18,6 +18,8 @@ from scipy.ndimage import zoom
 
 class VGG16Extractor(object):
     def __init__(self, width=480, height=320, use_mean_pixel=True, *args, **kwargs):
+	self.image_width = width
+	self.image_height = height
         self.use_mean_pixel = use_mean_pixel
         # BGR ordering
         self.mean_pixel = np.asarray([116.779, 103.939, 123.68], dtype=np.float32)
