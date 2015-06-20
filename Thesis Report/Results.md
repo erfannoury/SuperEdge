@@ -7,6 +7,7 @@
 | 2                 | 0.64 | 0.42          | 0.66 | 0.50 |
 | 3                 | 0.66 | 0.41          | 0.71 | 0.62 |
 | 3 (all)           | 0.68 | 0.41          | 0.70 | 0.60 |
+| 4                 | 0.70 | 0.24          | 0.72 | 0.68 |
 | _gPb-owt-ucm_ [2] | 0.73 | _             | 0.76 | 0.73 |
 
 ## Model Descriptions and Charts
@@ -25,6 +26,10 @@
 
 ![3.XGBRegressor](Result Charts/3.isoF.png)
 
+### 4. XGBRegressor (2015/06/18)
+`XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` trained on the first 30 training images using VGG 16-layer model with Poisson-disk sampling with radius 4. Also no upscaling was performed when testing the classifier on test set images, despite this, results show a good enough spatial resolution is present. Benchmark results are based on all of the test images.
+
+![4.XGBRegressor](Result Charts/4.isoF.png)
 
 # 
 [1] - Canny, John. "A computational approach to edge detection." _Pattern Analysis and Machine Intelligence, IEEE Transactions on_ 6 (1986): 679-698.
