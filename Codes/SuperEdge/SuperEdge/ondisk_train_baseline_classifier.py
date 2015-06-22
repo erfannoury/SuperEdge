@@ -21,7 +21,7 @@ def main():
     samples = pds.get_sample()
     Xtrain, ytrain, _ = BSDS.load(which='train')
     idx = -1
-    for b in xrange(Xtrain.shape[0] / batch_size + 1):
+    for b in xrange(int(np.ceil(Xtrain.shape[0] * 1.0 / batch_size))):
         features = []
         labels = []
         for _ in xrange(batch_size):
@@ -29,7 +29,7 @@ def main():
             if idx >= Xtrain.shape[0]:
                 break
             hyperimage = vgg.transform(Xtrain[idx,...])
-            print idx, ' ', hyperimage.shape
+#            print idx, ' ', hyperimage.shape
             for y in xrange(hyperimage.shape[0]):
                 for x in xrange(hyperimage.shape[1]):
                     if ytrain[idx, y, x] > 0:
@@ -60,7 +60,7 @@ def main():
     feat_memmap = np.memmap(path.join(cache_path, feat_batch_name[1:]), dtype='float32', mode='w+', shape=(feat_count, feat_len))
     lbl_memmap = np.memmap(path.join(cache_path, lbl_batch_name[1:]), dtype='float32', mode='w+', shape=(feat_count,))
     count = 0
-    for b in xrange(Xtrain.shape[0] / batch_size + 1):
+    for b in xrange(int(np.ceil(Xtrain.shape[0] * 1.0 / batch_size))):
         bfeat_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, feat_batch_name))), dtype='float32', mode='r')
         blbl_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, lbl_batch_name))), dtype='float32', mode='r')
         feat_memmap[count:count + b_memmap.shape[0],:] = bfeat_memmap
@@ -77,7 +77,7 @@ def main():
     clf.fit(features, labels)
     print 'training xgboost regressor took: ', (datetime.now() - now)
     print 'saving trained regressor'
-    joblib.dump(clf, '../../../Models/XGBR.pkl', compress=True)
+    joblib.dump(clf, '../../../Models/ondisk_XGBR.pkl', compress=True)
 
 
 if __name__ == '__main__':
