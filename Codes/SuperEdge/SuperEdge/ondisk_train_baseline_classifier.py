@@ -63,7 +63,7 @@ def main():
     for b in xrange(int(np.ceil(Xtrain.shape[0] * 1.0 / batch_size))):
         bfeat_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, feat_batch_name))), dtype='float32', mode='r')
         blbl_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, lbl_batch_name))), dtype='float32', mode='r')
-        feat_memmap[count:count + b_memmap.shape[0],:] = bfeat_memmap
+        feat_memmap[count:count + bfeat_memmap.shape[0],:] = bfeat_memmap
         lbl_memmap[count:count + bfeat_memmap.shape[0]] = blbl_memmap
         count += bfeat_memmap.shape[0]
         feat_memmap.flush()
