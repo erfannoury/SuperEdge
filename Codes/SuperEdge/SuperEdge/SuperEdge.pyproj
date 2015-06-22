@@ -33,6 +33,9 @@
     <Compile Include="nyud_features.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="ondisk_train_baseline_classifier.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="poisson_disc.py">
       <SubType>Code</SubType>
     </Compile>
@@ -46,6 +49,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="test_poisson_disk.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="test_single_image.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="train_baseline_classifier.py">
