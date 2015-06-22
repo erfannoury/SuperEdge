@@ -12,14 +12,13 @@ def main():
     cache_path = 'cache/'
     batch_size = 50
     feat_batch_name = '_feat.dat'
-    feat_count = 0
-    feat_len = 0
     lbl_batch_name = '_lbl.dat'
     now = datetime.now()    
     vgg = VGG16Extractor()
     pds = PoissonDiskSampler(vgg.image_width, vgg.image_height, 4)
     samples = pds.get_sample()
     Xtrain, ytrain, _ = BSDS.load(which='train')
+    shapes = {}
     idx = -1
     for b in xrange(int(np.ceil(Xtrain.shape[0] * 1.0 / batch_size))):
         features = []
@@ -43,8 +42,7 @@ def main():
         print 'transforming batch ', b, ' of training set took ', (datetime.now() - now)
         features = np.asarray(features, dtype=np.float32)
         print 'batch ', b, ' features.shape: ', features.shape
-        feat_count += features.shape[0]
-        feat_len = features.shape[1]
+        shapes[b] = features.shape
         labels = np.asarray(labels, dtype=np.float32)
         print 'batch ', b, ' labels.shape: ', labels.shape
         feat_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, feat_batch_name))), dtype='float32', mode='w+', shape=features.shape)
@@ -54,6 +52,11 @@ def main():
         lbl_memmap[:] = labels
         del lbl_memmap
 
+    feat_count = 0
+    feat_len = 0
+    for b in shapes.keys():
+        feat_count += shapes[b][0]
+        feat_len = shapes[b][1]
     print 'transforming all batches of training set finished'
     print 'creating the final training set'
     now = datetime.now()
@@ -61,11 +64,11 @@ def main():
     lbl_memmap = np.memmap(path.join(cache_path, lbl_batch_name[1:]), dtype='float32', mode='w+', shape=(feat_count,))
     count = 0
     for b in xrange(int(np.ceil(Xtrain.shape[0] * 1.0 / batch_size))):
-        bfeat_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, feat_batch_name))), dtype='float32', mode='r')
-        blbl_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, lbl_batch_name))), dtype='float32', mode='r')
+        bfeat_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, feat_batch_name))), dtype='float32', mode='r', shape=shapes[b])
+        blbl_memmap = np.memmap(path.join(cache_path, str.format('%d%s' % (b, lbl_batch_name))), dtype='float32', mode='r', shape=(shapes[b][0],))
         feat_memmap[count:count + bfeat_memmap.shape[0],:] = bfeat_memmap
         lbl_memmap[count:count + bfeat_memmap.shape[0]] = blbl_memmap
-        count += bfeat_memmap.shape[0]
+        count += shapes[b][0]
         feat_memmap.flush()
         lbl_memmap.flush()
     print 'creating the final training set took: ', (datetime.now() - now)
