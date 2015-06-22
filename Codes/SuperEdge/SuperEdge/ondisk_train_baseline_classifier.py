@@ -19,7 +19,7 @@ def main():
     vgg = VGG16Extractor()
     pds = PoissonDiskSampler(vgg.image_width, vgg.image_height, 4)
     samples = pds.get_sample()
-    Xtrain, ytrain = BSDS.load(which='train')
+    Xtrain, ytrain, _ = BSDS.load(which='train')
     idx = -1
     for b in xrange(Xtrain.shape[0] / batch_size + 1):
         features = []
