@@ -1,15 +1,19 @@
 ## Overview
 
-| Index             | ODS  | ODS threshold | OIS  | AP   |
-|-------------------|------|---------------|------|------|
-| _Canny_ [1]       | 0.60 | -             | 0.63 | 0.58 |
-| 1                 | 0.64 | 0.57          | 0.67 | 0.42 |
-| 2                 | 0.64 | 0.42          | 0.66 | 0.50 |
-| 5                 | 0.66 | 0.14          | 0.68 | 0.61 |
-| 3                 | 0.66 | 0.41          | 0.71 | 0.62 |
-| 3 (all)           | 0.68 | 0.41          | 0.70 | 0.60 |
-| 4                 | 0.70 | 0.24          | 0.72 | 0.68 |
-| _gPb-owt-ucm_ [2] | 0.73 | _             | 0.76 | 0.73 |
+| Index             | ODS  | ODS threshold | OIS  | AP   | Training size | Model Name | Classifier |
+|-------------------|------|---------------|------|------|---------------|------------|------------|
+| _Canny_ [1]       | 0.60 | -             | 0.63 | 0.58 | -             | -          | -          |
+| 1                 | 0.64 | 0.57          | 0.67 | 0.42 | 100 (4)       | CNN F      | XGBR       |
+| 7                 | 0.64 | 0.16          | 0.67 | 0.56 | 200 (2)       | CNN F      | XGBR       |
+| 2                 | 0.64 | 0.42          | 0.66 | 0.50 | 50 (2)        | CNN F      | XGBR       |
+| 6                 | 0.65 | 0.21          | 0.67 | 0.57 | 200 (2)       | CNN F      | XGBR       |
+| 8                 | 0.66 | 0.30          | 0.65 | 0.58 | 200 (2)       | CNN F      | XGBR       |
+| 5                 | 0.66 | 0.14          | 0.68 | 0.61 | 50 (4)        | CNN F      | XGBR       |
+| 3                 | 0.66 | 0.41          | 0.71 | 0.62 | 50 (2)        | CNN F      | XGBR       |
+| 3 (all)           | 0.68 | 0.41          | 0.70 | 0.60 | 50 (2)        | CNN F      | XGBR       |
+| 9                 | 0.69 | 0.18          | 0.71 | 0.67 | 200 (3)       | VGG 16     | XGBR       |
+| 4                 | 0.70 | 0.24          | 0.72 | 0.68 | 30 (4)        | VGG 16     | XGBR       |
+| _gPb-owt-ucm_ [2] | 0.73 | _             | 0.76 | 0.73 | -             | -          | -          |
 
 ## Model Descriptions and Charts
 ### 1. XGBRegressor (2015/06/02)
@@ -36,6 +40,19 @@
 `XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` trained on the first 50 training images using VGG CNN F model with Poisson-disk sampling with radius 4. In the testing phase, all of the images from the test set were used and they were upscaled when given as input to the classifier. Results show that deeper tree are only good for larger models. I think overfitting is more obvious in this set of results.
 
 ![5.XGBRegressor](Result Charts/5.isoF.png)
+
+
+### 6. XGBRegressor (2015/06/24)
+`XGBRegressor(max_depth=10, nthread=24, n_estimators=150, objective='reg:logistic')` using features from CNN F pre-trained model with features saved on disk and accessed using `numpy.memmap`.
+
+### 7. XGBRegressor (2015/06/24)
+`XGBRegressor(max_depth=15, nthread=24, n_estimators=150, objective='reg:logistic')` using features from CNN F pre-trained model with features saved on disk and accessed using `numpy.memmap`.
+
+### 8. XGBRegressor (2015/06/24)
+`XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` using features from CNN F pre-trained model with features saved on disk and accessed using `numpy.memmap`.
+
+### 9. XGBRegressor (2015/06/26)
+`XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` using features from VGG 16-layer pre-trained model with features saved on disk and accessed using `numpy.memmap`.
 
 # 
 [1] - Canny, John. "A computational approach to edge detection." _Pattern Analysis and Machine Intelligence, IEEE Transactions on_ 6 (1986): 679-698.
