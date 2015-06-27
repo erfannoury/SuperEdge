@@ -57,6 +57,9 @@
     <Compile Include="train_baseline_classifier.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="train_classifier.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
