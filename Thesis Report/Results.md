@@ -12,6 +12,7 @@
 | 3                 | 0.66 | 0.41          | 0.71 | 0.62 | 50 (2)        | CNN F      | XGBR       |
 | 3 (all)           | 0.68 | 0.41          | 0.70 | 0.60 | 50 (2)        | CNN F      | XGBR       |
 | 9                 | 0.69 | 0.18          | 0.71 | 0.67 | 200 (3)       | VGG 16     | XGBR       |
+| 10                | 0.69 | 0.02          | 0.69 | 0.52 | 25 (3)        | VGG 16     | XGBC       |
 | 4                 | 0.70 | 0.24          | 0.72 | 0.68 | 30 (4)        | VGG 16     | XGBR       |
 | _gPb-owt-ucm_ [2] | 0.73 | _             | 0.76 | 0.73 | -             | -          | -          |
 
@@ -53,6 +54,9 @@
 
 ### 9. XGBRegressor (2015/06/26)
 `XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` using features from VGG 16-layer pre-trained model with features saved on disk and accessed using `numpy.memmap`.
+
+### 10. XGBClassifier (2015/07/04)
+`XGBClassifier(max_depth=10, nthread=24, n_estimators=30)` using features from VGG 16-layer pre-trained model. When training, labels weren't thresholded, and also when testing, predictions from the network were used instead of the `predict_proba` method of getting the predictions. Also note that images 100 to 125 were used for the training.
 
 # 
 [1] - Canny, John. "A computational approach to edge detection." _Pattern Analysis and Machine Intelligence, IEEE Transactions on_ 6 (1986): 679-698.
