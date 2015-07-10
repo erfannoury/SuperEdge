@@ -43,16 +43,16 @@
 ![5.XGBRegressor](Result Charts/5.isoF.png)
 
 
-### 6. XGBRegressor (2015/06/24)
+### ~~6. XGBRegressor (2015/06/24)~~
 ~~`XGBRegressor(max_depth=10, nthread=24, n_estimators=150, objective='reg:logistic')` using features from CNN F pre-trained model with features saved on disk and accessed using `numpy.memmap`.~~ _**These results are invalid**_
 
-### 7. XGBRegressor (2015/06/24)
+### ~~7. XGBRegressor (2015/06/24)~~
 ~~`XGBRegressor(max_depth=15, nthread=24, n_estimators=150, objective='reg:logistic')` using features from CNN F pre-trained model with features saved on disk and accessed using `numpy.memmap`.~~ _**These results are invalid**_
 
-### 8. XGBRegressor (2015/06/24)
+### ~~8. XGBRegressor (2015/06/24)~~
 ~~`XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` using features from CNN F pre-trained model with features saved on disk and accessed using `numpy.memmap`.~~ _**These results are invalid**_
 
-### 9. XGBRegressor (2015/06/26)
+### 9. ~~XGBRegressor (2015/06/26)~~
 ~~`XGBRegressor(max_depth=20, nthread=24, n_estimators=150, objective='reg:logistic')` using features from VGG 16-layer pre-trained model with features saved on disk and accessed using `numpy.memmap`.~~ _**These results are invalid**_
 
 ### 10. XGBClassifier (2015/07/04)
