@@ -4,7 +4,7 @@ from sklearn.datasets import dump_svmlight_file
 import os.path as path
 
 def main():
-    cache_path = 'largecache/'
+    cache_path = 'cachelarge/'
     feat_name = 'feat.dat'
     lbl_name = 'lbl.dat'
     feat_len = 4224 #1088
@@ -14,7 +14,9 @@ def main():
     print 'loading dataset took ', (datetime.now() - now)
     now = datetime.now()
     print 'starting dumping feature files to libsvm format'
-    dump_svmlight_file(feat_memmap, lbl_memmap, 'largecache/data.train.txt')
+    libsvm_file = 'data.train.txt'
+    dump_svmlight_file(feat_memmap, lbl_memmap, path.join(cache_path, libsvm_file))
+    print 'dumping feature file took ', (datetime.now() - now)
 
 if __name__ == '__main__':
     main()
